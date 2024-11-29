@@ -21,16 +21,15 @@ class WeatherViewModel @Inject constructor(
     val forecast: StateFlow<ForecastUiState> = _forecast
 
 
-    fun fetchCurrentWeather() {
+    fun fetchCurrentWeather(location: String) {
         viewModelScope.launch {
             _currentWeather.value = WeatherUiState.Loading
             try {
-
-                val weatherResponse = weatherRepository.getCurrentWeather()
+                val weatherEntity = weatherRepository.getCurrentWeather(location, apiKey = "7fc58d6316862a2bcabc5bff628978c6", "metric", "es")
                 _currentWeather.value = WeatherUiState.Success(
-                    city = weatherResponse.name,
-                    temperature = "${weatherResponse.main.temp}°C",
-                    description = weatherResponse.weather.first().description
+                    city = weatherEntity.city,
+                    temperature = weatherEntity.temperature,
+                    description = weatherEntity.description
                 )
             } catch (e: Exception) {
                 _currentWeather.value = WeatherUiState.Error("Error al obtener datos del clima")

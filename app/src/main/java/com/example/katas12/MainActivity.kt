@@ -46,7 +46,7 @@ fun CurrentWeatherScreen(viewModel: WeatherViewModel = hiltViewModel()) {
     val weatherState by viewModel.currentWeather.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchCurrentWeather()
+        viewModel.fetchCurrentWeather("Buenos Aires")
     }
 
     Scaffold(
