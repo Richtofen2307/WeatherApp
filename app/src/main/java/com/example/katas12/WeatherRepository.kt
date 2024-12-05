@@ -20,7 +20,8 @@ class WeatherRepository @Inject constructor(
             val weatherEntity = WeatherEntity(
                 city = weatherResponse.name,
                 temperature = "${weatherResponse.main.temp}°C",
-                description = weatherResponse.weather.first().description
+                description = weatherResponse.weather.first().description,
+
             )
             weatherDao.insertWeather(weatherEntity)
             weatherEntity
@@ -29,5 +30,11 @@ class WeatherRepository @Inject constructor(
         }
     }
 
-    suspend fun getForecastWeather() = weatherApi.getForecastWeather("7fc58d6316862a2bcabc5bff628978c6", "metric", "es")
+    suspend fun getHourlyForecast(location: String, apiKey: String, units: String, lang: String): ForecastResponse {
+        return weatherApi.getHourlyForecast(location, apiKey, units, lang)
+    }
+
+    suspend fun getForecastWeather() = weatherApi.getForecastWeather(city ="Medellin", "7fc58d6316862a2bcabc5bff628978c6", "metric", "es")
+
+
 }

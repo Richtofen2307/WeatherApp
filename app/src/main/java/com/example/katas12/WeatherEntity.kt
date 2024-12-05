@@ -8,5 +8,6 @@ data class WeatherEntity(
     @PrimaryKey val id: Int = 0,
     val city: String,
     val temperature: String,
-    val description: String
+    val description: String,
+
 )

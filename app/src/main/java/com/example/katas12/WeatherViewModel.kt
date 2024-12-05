@@ -20,6 +20,8 @@ class WeatherViewModel @Inject constructor(
     private val _forecast = MutableStateFlow<ForecastUiState>(ForecastUiState.Loading)
     val forecast: StateFlow<ForecastUiState> = _forecast
 
+    private val _hourlyForecast = MutableStateFlow<ForecastUiState>(ForecastUiState.Loading)
+    val hourlyForecast: StateFlow<ForecastUiState> = _hourlyForecast
 
     fun fetchCurrentWeather(location: String) {
         viewModelScope.launch {
@@ -29,7 +31,8 @@ class WeatherViewModel @Inject constructor(
                 _currentWeather.value = WeatherUiState.Success(
                     city = weatherEntity.city,
                     temperature = weatherEntity.temperature,
-                    description = weatherEntity.description
+                    description = weatherEntity.description,
+
                 )
             } catch (e: Exception) {
                 _currentWeather.value = WeatherUiState.Error("Error al obtener datos del clima")
@@ -47,8 +50,23 @@ class WeatherViewModel @Inject constructor(
             }
         }
     }
+    fun fetchHourlyForecast(location: String) {
+        viewModelScope.launch {
+            _hourlyForecast.value = ForecastUiState.Loading
+            try {
+                val hourlyForecastResponse = weatherRepository.getHourlyForecast(location, apiKey = "7fc58d6316862a2bcabc5bff628978c6", units = "metric", lang = "es")
+                _hourlyForecast.value = ForecastUiState.Success(hourlyForecastResponse.list)
+            } catch (e: Exception) {
+                _hourlyForecast.value = ForecastUiState.Error("Error al obtener el pronóstico horario: ${e.message}")
+            }
+        }
+    }
 
 }
+
+
+
+
 
 sealed class WeatherUiState {
     object Loading : WeatherUiState()

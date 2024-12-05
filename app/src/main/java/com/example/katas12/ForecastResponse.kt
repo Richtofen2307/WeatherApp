@@ -15,5 +15,11 @@ data class Main(
 )
 
 data class Weather(
-    val description: String
+    val description: String,
+    val icon: String
+)
+data class HourlyForecastItem(
+    val dt: Long,
+    val main: Main,
+    val weather: List<Weather>
 )
