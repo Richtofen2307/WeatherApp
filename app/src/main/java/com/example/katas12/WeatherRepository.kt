@@ -30,11 +30,21 @@ class WeatherRepository @Inject constructor(
         }
     }
 
-    suspend fun getHourlyForecast(location: String, apiKey: String, units: String, lang: String): ForecastResponse {
-        return weatherApi.getHourlyForecast(location, apiKey, units, lang)
-    }
-
     suspend fun getForecastWeather() = weatherApi.getForecastWeather(city ="Medellin", "7fc58d6316862a2bcabc5bff628978c6", "metric", "es")
 
+    suspend fun getDailyForecast(location: String, apiKey: String, units: String, lang: String): List<ForecastItem> {
+        val forecastResponse = weatherApi.getForecastWeather(location, apiKey, units, lang)
+
+        return forecastResponse.list.groupBy { it.dt_txt.split(" ").first() }
+            .map { (date, forecasts) ->
+                val averageTemp = forecasts.map { it.main.temp }.average()
+                val mainWeather = forecasts.first().weather.firstOrNull()
+                ForecastItem(
+                    dt_txt = date,
+                    main = Main(temp = averageTemp),
+                    weather = listOfNotNull(mainWeather)
+                )
+            }
+    }
 
 }

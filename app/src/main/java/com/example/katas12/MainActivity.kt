@@ -65,13 +65,16 @@ fun NavGraph(navController: NavHostController) {
 
 
 @Composable
-fun CurrentWeatherScreen(navController: NavHostController, viewModel: WeatherViewModel = hiltViewModel()) {
+fun CurrentWeatherScreen(
+    navController: NavHostController,
+    viewModel: WeatherViewModel = hiltViewModel()
+) {
     val weatherState by viewModel.currentWeather.collectAsState()
-    val hourlyForecastState by viewModel.hourlyForecast.collectAsState()
+    val dailyForecastState by viewModel.dailyForecast.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchCurrentWeather("Medellin")
-        viewModel.fetchHourlyForecast("Medellin")
+        viewModel.fetchDailyForecast("Medellin")
     }
 
     Scaffold(
@@ -84,65 +87,46 @@ fun CurrentWeatherScreen(navController: NavHostController, viewModel: WeatherVie
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Top, // Ajustar para mostrar los elementos al principio
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (weatherState) {
-                is WeatherUiState.Loading -> {
-                    CircularProgressIndicator()
-                }
-
+                is WeatherUiState.Loading -> CircularProgressIndicator()
                 is WeatherUiState.Success -> {
                     val successState = weatherState as WeatherUiState.Success
                     Text(text = successState.city, style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = successState.temperature,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = successState.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Text(text = "${successState.temperature}°C", style = MaterialTheme.typography.headlineMedium)
+                    Text(text = successState.description, style = MaterialTheme.typography.bodyMedium)
                 }
-
-                is WeatherUiState.Error -> {
-                    val errorState = weatherState as WeatherUiState.Error
-                    Text(text = "Error: ${errorState.message}")
-                }
+                is WeatherUiState.Error -> Text(text = "Error: ${(weatherState as WeatherUiState.Error).message}")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Mostrar el pronóstico horario si está disponible
-            when (hourlyForecastState) {
-                is ForecastUiState.Loading -> {
-                    CircularProgressIndicator()
-                }
+            Text(text = "Pronóstico para los próximos días", style = MaterialTheme.typography.headlineSmall)
 
+            when (dailyForecastState) {
+                is ForecastUiState.Loading -> CircularProgressIndicator()
                 is ForecastUiState.Success -> {
-                    val forecastList = (hourlyForecastState as ForecastUiState.Success).forecastList
+                    val dailyForecast = (dailyForecastState as ForecastUiState.Success).forecastList
                     LazyRow {
-                        items(forecastList) { forecast ->
-                            ForecastItemView(forecast) // Card para cada pronóstico horario
+                        items(dailyForecast) { forecast ->
+                            ForecastItemView(forecast = forecast)
                         }
                     }
                 }
-
-                is ForecastUiState.Error -> {
-                    val errorState = hourlyForecastState as ForecastUiState.Error
-                    Text(text = "Error al cargar el pronóstico horario: ${errorState.message}")
-                }
+                is ForecastUiState.Error -> Text(text = "Error: ${(dailyForecastState as ForecastUiState.Error).message}")
             }
-
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { navController.navigate("forecast_weather") }) {
                 Text("Ver Pronóstico")
             }
         }
+
     }
+
 }
+
 
 @Composable
 fun ForecastWeatherScreen(
@@ -233,19 +217,19 @@ fun ForecastItemView(forecast: ForecastItem) {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Fecha y hora del pronóstico
-            val dateTime = forecast.dt_txt.split(" ") // Esto divide la fecha y hora
-            val date = dateTime.first() // Fecha
-            val time = dateTime.getOrElse(1) { "Sin hora" } // Hora (con manejo de error si no existe)
+
+            val dateTime = forecast.dt_txt.split(" ")
+            val date = dateTime.first()
+            val time = dateTime.getOrElse(1) { "Sin hora" }
 
             Text(
-                text = "$date $time", // Muestra la fecha y hora
+                text = "$date $time",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Icono del clima
+
             val icon = forecast.weather.firstOrNull()?.icon
             if (icon != null) {
                 Image(
@@ -256,7 +240,7 @@ fun ForecastItemView(forecast: ForecastItem) {
             }
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Temperatura
+
             Text(
                 text = "${forecast.main.temp}°C",
                 style = MaterialTheme.typography.headlineSmall,
@@ -264,7 +248,7 @@ fun ForecastItemView(forecast: ForecastItem) {
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Descripción del clima
+
             val description = forecast.weather.firstOrNull()?.description ?: "Sin descripción"
             Text(
                 text = description.capitalize(),

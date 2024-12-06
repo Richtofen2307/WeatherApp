@@ -21,11 +21,5 @@ interface WeatherApi {
         @Query("lang") language: String
     ): ForecastResponse
 
-    @GET("forecast/hourly")
-    suspend fun getHourlyForecast(
-        @Query("q") location: String,
-        @Query("appid") apiKey: String,
-        @Query("units") units: String,
-        @Query("lang") lang: String
-    ): ForecastResponse
+
 }
