@@ -1,7 +1,9 @@
-package com.example.katas12
+package com.example.katas12.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.katas12.data.model.ForecastItem
+import com.example.katas12.data.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -64,10 +66,6 @@ class WeatherViewModel @Inject constructor(
     }
 
 }
-
-
-
-
 
 sealed class WeatherUiState {
     object Loading : WeatherUiState()

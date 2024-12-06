@@ -1,5 +1,8 @@
-package com.example.katas12
+package com.example.katas12.data.repository
 
+import com.example.katas12.data.model.ForecastItem
+import com.example.katas12.data.model.Main
+import com.example.katas12.data.remote.WeatherApi
 import javax.inject.Inject
 
 class WeatherRepository @Inject constructor(
@@ -22,7 +25,7 @@ class WeatherRepository @Inject constructor(
                 temperature = "${weatherResponse.main.temp}°C",
                 description = weatherResponse.weather.first().description,
 
-            )
+                )
             weatherDao.insertWeather(weatherEntity)
             weatherEntity
         } else {

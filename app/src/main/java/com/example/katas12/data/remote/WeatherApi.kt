@@ -1,5 +1,7 @@
-package com.example.katas12
+package com.example.katas12.data.remote
 
+import com.example.katas12.data.model.ForecastResponse
+import com.example.katas12.data.model.CurrentWeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -20,6 +22,5 @@ interface WeatherApi {
         @Query("units") units: String,
         @Query("lang") language: String
     ): ForecastResponse
-
 
 }

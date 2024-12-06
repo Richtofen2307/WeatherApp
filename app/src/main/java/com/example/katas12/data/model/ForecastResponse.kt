@@ -1,4 +1,4 @@
-package com.example.katas12
+package com.example.katas12.data.model
 
 data class ForecastResponse(
     val list: List<ForecastItem>

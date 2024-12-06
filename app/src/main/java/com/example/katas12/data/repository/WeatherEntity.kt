@@ -1,4 +1,4 @@
-package com.example.katas12
+package com.example.katas12.data.repository
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

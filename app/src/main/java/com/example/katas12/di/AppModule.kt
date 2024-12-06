@@ -1,5 +1,6 @@
-package com.example.katas12
+package com.example.katas12.di
 
+import com.example.katas12.data.remote.WeatherApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

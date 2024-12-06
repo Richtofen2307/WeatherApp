@@ -1,13 +1,15 @@
-package com.example.katas12
+package com.example.katas12.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.katas12.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.example.katas12.data.repository.WeatherDao
 
 @Module
 @InstallIn(SingletonComponent::class)
